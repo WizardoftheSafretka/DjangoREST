@@ -1,10 +1,25 @@
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
 
 class User(AbstractBaseUser):
+    class CustomUserManager(BaseUserManager):
+        def create_user(self, email, password=None, **extra_fields):
+            if not email:
+                raise ValueError('Email обязателен')
+            email = self.normalize_email(email)
+            user = self.model(email=email, **extra_fields)
+            user.set_password(password)
+            user.save()
+            return user
 
+        def create_superuser(self, email, password=None, **extra_fields):
+            extra_fields.setdefault('is_staff', True)
+            extra_fields.setdefault('is_superuser', True)
+            return self.create_user(email, password, **extra_fields)
 
+        def get_by_natural_key(self, username):
+            return self.get(**{self.model.USERNAME_FIELD: username})
 
     email = models.EmailField(
         unique=True, verbose_name="Почта", help_text="Укажите почту"
@@ -34,6 +49,8 @@ class User(AbstractBaseUser):
     )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -102,3 +119,5 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Платеж {self.amount} от {self.user.email}"
+
+
