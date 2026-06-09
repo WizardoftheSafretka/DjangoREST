@@ -8,8 +8,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from materials.permissions import IsOwner
-from users.models import Payment, User
-from users.serializers import PaymentSerializer, PrivateUserSerializer, PublicUserSerializer
+from users.models import Payment, User, Pay
+from users.serializers import PaymentSerializer, PrivateUserSerializer, PublicUserSerializer, PaySerializer
+from users.services import create_stripe_price, create_stripe_sessions, create_stripe_product
 
 
 class PaymentListAPIView(ListAPIView):
@@ -20,6 +21,14 @@ class PaymentListAPIView(ListAPIView):
     ordering_fields = ['payment_date']
     ordering = ['-payment_date']
     permission_classes = (AllowAny,)
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user = self.request.user)
+        price = create_stripe_price(payment.amount)
+        session_id, payment_link = create_stripe_sessions(price)
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -67,3 +76,17 @@ class UserDestroyApiView(DestroyAPIView):
     queryset = User.objects.all()
     serializer_class = PrivateUserSerializer
     permission_classes = (IsAuthenticated, IsOwner)
+
+class PayCreateAPIView(CreateAPIView):
+    serializer_class = PaySerializer
+    queryset = Pay.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user = self.request.user)
+        price = create_stripe_price(payment.amount)
+        session_id, payment_link = create_stripe_sessions(price)
+        product = create_stripe_product(payment.product)
+        payment.product = product
+        payment.session_id = session_id
+        payment.link = payment_link
+        payment.save()
