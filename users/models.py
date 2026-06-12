@@ -99,11 +99,9 @@ class Payment(models.Model):
         help_text='Укажите оплаченный урок',
         related_name='payments'
     )
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    amount = models.PositiveIntegerField(
         verbose_name='Сумма оплаты',
-        help_text='Укажите сумму оплаты'
+        help_text='Укажите сумму оплаты',
     )
     payment_method = models.CharField(
         max_length=20,
@@ -119,5 +117,50 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Платеж {self.amount} от {self.user.email}"
+
+class Pay(models.Model):
+
+    product = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name="Продукт",
+        help_text="Укажите продукт",
+    )
+
+    amount = models.PositiveIntegerField(
+        verbose_name='Сумма оплаты',
+        help_text='Укажите сумму оплаты',
+    )
+    session_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name='Id сессии',
+        help_text='Укажите id сессии',
+    )
+    link = models.URLField(
+        max_length=400,
+        blank=True,
+        null=True,
+        verbose_name='Ссылка для оплаты',
+        help_text='Укажите ссылку для оплаты',
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Пользователь',
+        help_text='Укажите пользователя',
+    )
+
+    class Meta:
+        verbose_name = 'Оплата'
+        verbose_name_plural = 'Оплаты'
+        ordering = ['-id']
+
+    def __str__(self):
+        return self.amount
 
 

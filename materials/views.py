@@ -87,3 +87,4 @@ class SubscribeViewSet(ModelViewSet):
             Subscribe.objects.create(course=course_item, user=request.user, is_subscribe=True)
             message = 'подписка добавлена'
             return Response({"message": message}, status=status.HTTP_201_CREATED)
+
