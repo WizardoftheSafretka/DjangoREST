@@ -10,6 +10,7 @@ from materials.models import Course, Lesson, Subscribe
 from materials.paginations import CustomPagination
 from materials.permissions import IsModer, IsOwner
 from materials.serializers import CourseSerializer, LessonSerializer, SubscribeSerializer
+from materials.tasks import send_update
 
 
 class CourseViewSet(ModelViewSet):
@@ -32,6 +33,10 @@ class CourseViewSet(ModelViewSet):
             permission_classes = [IsAuthenticated]
 
         return [permission() for permission in permission_classes]
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_update.delay(course.id)
 
 
 class LessonCreateApiView(CreateAPIView):

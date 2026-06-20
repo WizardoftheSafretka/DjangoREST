@@ -55,6 +55,12 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+last_login = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Последний вход",
+        help_text="Дата и время последнего входа пользователя"
+    )
+
 
 class Meta:
     verbose_name = "Пользователь"
