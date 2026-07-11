@@ -10,26 +10,21 @@ class BaseAPITestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            email="admin@example.com",
-            password="testpass123"
+            email="admin@example.com", password="testpass123"
         )
 
         self.moderator = User.objects.create_user(
-            email="moder@example.com",
-            password="testpass456"
+            email="moder@example.com", password="testpass456"
         )
         self.moderator.is_staff = True
         self.moderator.save()
 
         self.other_user = User.objects.create_user(
-            email="other@example.com",
-            password="testpass789"
+            email="other@example.com", password="testpass789"
         )
 
         self.course = Course.objects.create(
-            title='Test Course',
-            description='Test description',
-            owner=self.user
+            title="Test Course", description="Test description", owner=self.user
         )
         self.client.force_authenticate(user=self.user)
 
@@ -44,9 +39,7 @@ class CourseTestCase(BaseAPITestCase):
     def setUp(self):
         super().setUp()
         self.lesson = Lesson.objects.create(
-            title='Test Lesson',
-            course=self.course,
-            owner=self.user
+            title="Test Lesson", course=self.course, owner=self.user
         )
 
     def test_course_retrieve(self):
@@ -68,10 +61,7 @@ class CourseTestCase(BaseAPITestCase):
     def test_course_create(self):
         """Тест создания курса (обычный пользователь МОЖЕТ)"""
         url = reverse("materials:course-list")
-        data = {
-            "title": "New Course",
-            "description": "Test description"
-        }
+        data = {"title": "New Course", "description": "Test description"}
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -82,10 +72,7 @@ class CourseTestCase(BaseAPITestCase):
         self.client.force_authenticate(user=self.moderator)
 
         url = reverse("materials:course-list")
-        data = {
-            "title": "Moder Course",
-            "description": "Test description"
-        }
+        data = {"title": "Moder Course", "description": "Test description"}
         response = self.client.post(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -147,10 +134,10 @@ class LessonTestCase(BaseAPITestCase):
     def setUp(self):
         super().setUp()
         self.lesson = Lesson.objects.create(
-            title='Test Lesson',
-            description='Lesson description',
+            title="Test Lesson",
+            description="Lesson description",
             course=self.course,
-            owner=self.user
+            owner=self.user,
         )
 
     def test_lesson_retrieve(self):
@@ -229,13 +216,10 @@ class SubscribeTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(
-            email="user@example.com",
-            password="testpass123"
+            email="user@example.com", password="testpass123"
         )
         self.course = Course.objects.create(
-            title='Test Course',
-            description='Test description',
-            owner=self.user
+            title="Test Course", description="Test description", owner=self.user
         )
         self.client.force_authenticate(user=self.user)
 
