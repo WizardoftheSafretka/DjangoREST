@@ -8,9 +8,8 @@ from rest_framework import status
 
 from materials.models import Course, Lesson, Subscribe
 from materials.paginations import CustomPagination
-from materials.permissions import IsModer, IsOwner
+from materials.permissions import IsModer, IsOwner, IsOwnerOrModer
 from materials.serializers import CourseSerializer, LessonSerializer, SubscribeSerializer
-from materials.tasks import send_update
 
 
 class CourseViewSet(ModelViewSet):
@@ -24,25 +23,27 @@ class CourseViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'create':
-            permission_classes = [IsAuthenticated, ~IsModer]
+            # Все могут создавать курсы
+            permission_classes = [IsAuthenticated]
         elif self.action in ["update", "partial_update", "retrieve"]:
-            permission_classes = [IsAuthenticated, IsModer | IsOwner]
+            # Владелец или модератор могут просматривать/редактировать
+            permission_classes = [IsAuthenticated, IsOwnerOrModer]
         elif self.action == "destroy":
+            # Только модератор может удалять
             permission_classes = [IsAuthenticated, IsModer]
         else:
             permission_classes = [IsAuthenticated]
-
         return [permission() for permission in permission_classes]
 
     def perform_update(self, serializer):
         course = serializer.save()
-        send_update.delay(course.id)
+        # send_update.delay(course.id)  # Закомментировано из-за Redis
 
 
 class LessonCreateApiView(CreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, ~IsModer]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -58,13 +59,13 @@ class LessonListApiView(ListAPIView):
 class LessonRetrieveApiView(RetrieveAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, IsModer | IsOwner]
+    permission_classes = [IsAuthenticated, IsOwnerOrModer]
 
 
 class LessonUpdateApiView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, IsModer | IsOwner]
+    permission_classes = [IsAuthenticated, IsOwnerOrModer]
 
 
 class LessonDestroyApiView(DestroyAPIView):
@@ -92,4 +93,3 @@ class SubscribeViewSet(ModelViewSet):
             Subscribe.objects.create(course=course_item, user=request.user, is_subscribe=True)
             message = 'подписка добавлена'
             return Response({"message": message}, status=status.HTTP_201_CREATED)
-

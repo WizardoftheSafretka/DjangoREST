@@ -2,63 +2,49 @@ version: '3.9'
 
 services:
   db:
-    networks:
-      - app_network
-    image: postgres
+    image: postgres:15
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $DB_USER" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
 
   web:
-    networks:
-      - app_network
     build: .
-    command: python manage.py migrate && python manage.py csu && python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py csu &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
       - media:/app/media
-      - static_volume:/code/static
     ports:
       - "8000:8000"
     depends_on:
-      - redis
       - db
+      - redis
     env_file:
       - ./.env
 
-  redis:
-    image: "redis:latest"
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./redis_data:/data
-    healthcheck:
-      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   celery:
-    build:
-      context: .
+    build: .
     command: celery -A config worker -l INFO
     volumes:
       - .:/app
     depends_on:
       - db
       - redis
+    env_file:
+      - ./.env
 
   celery_beat:
-    build:
-      context: .
+    build: .
     command: celery -A config beat -l INFO -S django
     volumes:
       - .:/app
@@ -66,12 +52,9 @@ services:
       - db
       - redis
       - celery
-
-networks:
-  app_network:
-    driver: bridge
+    env_file:
+      - ./.env
 
 volumes:
   postgres_data:
   media:
-  static_volume:

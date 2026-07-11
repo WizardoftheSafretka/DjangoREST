@@ -1,7 +1,8 @@
 # tasks.py
 from celery import shared_task
-from config.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail
+
+from config.settings import EMAIL_HOST_USER
 
 
 @shared_task
@@ -14,8 +15,8 @@ def send_update(course_id):
 
     for subscription in subscriptions:
         send_mail(
-            'Обновление курса',
+            "Обновление курса",
             f'Курс "{subscription.course.title}" был обновлен',
             EMAIL_HOST_USER,
-            [subscription.user.email]
+            [subscription.user.email],
         )

@@ -1,29 +1,41 @@
-from django.shortcuts import render
-from rest_framework import request
-
-from rest_framework.generics import ListAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView, CreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from materials.permissions import IsOwner
-from users.models import Payment, User, Pay
-from users.serializers import PaymentSerializer, PrivateUserSerializer, PublicUserSerializer, PaySerializer
-from users.services import create_stripe_price, create_stripe_sessions, create_stripe_product
+from users.models import Pay, Payment, User
+from users.serializers import (
+    PaymentSerializer,
+    PaySerializer,
+    PrivateUserSerializer,
+    PublicUserSerializer,
+)
+from users.services import (
+    create_stripe_price,
+    create_stripe_product,
+    create_stripe_sessions,
+)
 
 
 class PaymentListAPIView(ListAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
-    ordering_fields = ['payment_date']
-    ordering = ['-payment_date']
+    filterset_fields = ["paid_course", "paid_lesson", "payment_method"]
+    ordering_fields = ["payment_date"]
+    ordering = ["-payment_date"]
     permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
-        payment = serializer.save(user = self.request.user)
+        payment = serializer.save(user=self.request.user)
         price = create_stripe_price(payment.amount)
         session_id, payment_link = create_stripe_sessions(price)
         payment.session_id = session_id
@@ -54,7 +66,7 @@ class UserRetrieveApiView(RetrieveAPIView):
     def get_serializer_class(self):
         obj = self.get_object()
 
-        if request.user == obj:
+        if self.request.user == obj:
             return PrivateUserSerializer
         else:
             return PublicUserSerializer
@@ -77,16 +89,15 @@ class UserDestroyApiView(DestroyAPIView):
     serializer_class = PrivateUserSerializer
     permission_classes = (IsAuthenticated, IsOwner)
 
+
 class PayCreateAPIView(CreateAPIView):
     serializer_class = PaySerializer
     queryset = Pay.objects.all()
 
     def perform_create(self, serializer):
-        payment = serializer.save(user = self.request.user)
+        payment = serializer.save(user=self.request.user)
         price = create_stripe_price(payment.amount)
         session_id, payment_link = create_stripe_sessions(price)
-        product = create_stripe_product(payment.product)
-        payment.product = product
         payment.session_id = session_id
         payment.link = payment_link
         payment.save()

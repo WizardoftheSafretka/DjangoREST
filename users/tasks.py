@@ -1,7 +1,9 @@
 # tasks.py
+from datetime import timedelta
+
 from celery import shared_task
 from django.utils import timezone
-from datetime import timedelta
+
 from users.models import User  # импортируйте вашу модель пользователя
 
 
@@ -11,10 +13,7 @@ def block_inactive_users():
 
     month_ago = timezone.now() - timedelta(days=30)
 
-    inactive_users = User.objects.filter(
-        is_active=True,
-        last_login__lt=month_ago
-    )
+    inactive_users = User.objects.filter(is_active=True, last_login__lt=month_ago)
 
     for user in inactive_users:
         user.is_active = False

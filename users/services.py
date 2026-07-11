@@ -1,8 +1,9 @@
-import  stripe
+import stripe
 
 from config.settings import STRIPE_API_KEY
 
 stripe_api_key = STRIPE_API_KEY
+
 
 def create_stripe_price(amount):
     """Создает цену в страйпе"""
@@ -12,6 +13,7 @@ def create_stripe_price(amount):
         unit_amount=amount * 100,
         product_data={"name": "Buying a course"},
     )
+
 
 def create_stripe_sessions(price):
     """Создает сессию в страйпе"""
@@ -23,8 +25,8 @@ def create_stripe_sessions(price):
     )
     return session.get("id"), session.get("url")
 
+
 def create_stripe_product(name):
     """Создает продукт в страйпе"""
 
     return stripe.Product.create(name=name)
-
