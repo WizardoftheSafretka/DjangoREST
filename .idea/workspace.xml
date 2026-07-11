@@ -5,17 +5,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="48d3e452-b94f-4451-8160-a3fa75bfed77" name="Changes" comment="finish">
-      <change afterPath="$PROJECT_DIR$/materials/permissions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/management/commands/csu.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.flake8" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/ci.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.coverage" beforeDir="false" afterPath="$PROJECT_DIR$/.coverage" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/deploy.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/celery.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/celery.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/materials/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/migrations/0002_course_owner_lesson_owner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/migrations/0003_subscribe.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/materials/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/paginations.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/paginations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/tasks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/tests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/materials/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/materials/validators.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/validators.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/materials/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/materials/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/management/commands/csu.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/management/commands/csu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/management/commands/fill_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/management/commands/fill_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0002_payment.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0003_user_is_active_user_is_staff_user_is_superuser.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0004_alter_user_options_alter_user_managers_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0005_alter_user_options_alter_user_managers_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0006_user_is_active_user_is_staff.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0007_pay.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/migrations/0008_pay_product_alter_payment_amount.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/tasks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
     </list>
@@ -65,7 +92,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/homework&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#8 on feature/homework&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Maxim/PycharmProjects/PythonProject7&quot;
   }
 }</component>
@@ -137,7 +164,39 @@
       <option name="project" value="LOCAL" />
       <updated>1777485287986</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="finish 2">
+      <option name="closed" value="true" />
+      <created>1780593823451</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780593823451</updated>
+    </task>
+    <task id="LOCAL-00008" summary="finish">
+      <option name="closed" value="true" />
+      <created>1780971572277</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1780971572277</updated>
+    </task>
+    <task id="LOCAL-00009" summary="finish">
+      <option name="closed" value="true" />
+      <created>1780972259431</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780972259431</updated>
+    </task>
+    <task id="LOCAL-00010" summary="finish">
+      <option name="closed" value="true" />
+      <created>1780974756737</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1780974756737</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -146,6 +205,7 @@
     <MESSAGE value="finish working" />
     <MESSAGE value="serializer" />
     <MESSAGE value="models" />
+    <MESSAGE value="finish 2" />
     <MESSAGE value="finish" />
     <option name="LAST_COMMIT_MESSAGE" value="finish" />
   </component>

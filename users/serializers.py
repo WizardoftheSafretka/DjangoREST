@@ -1,25 +1,28 @@
 from rest_framework.serializers import ModelSerializer
-from users.models import Payment, User, Pay
+
+from users.models import Pay, Payment, User
 
 
 class PaymentSerializer(ModelSerializer):
     class Meta:
         model = Payment
-        fields = '__all__'
+        fields = "__all__"
 
 
 class PrivateUserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "password", "email", "last_name", "phone", "avatar", "payments")
+        fields = ("email", "password", "last_name", "phone", "avatar", "payments")
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class PublicUserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "email", "phone", "avatar")
+        fields = ("email", "phone", "avatar")  # Убрали username
+
 
 class PaySerializer(ModelSerializer):
     class Meta:
         model = Pay
-        fields = '__all__'
+        fields = "__all__"

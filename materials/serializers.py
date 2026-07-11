@@ -5,8 +5,6 @@ from materials.validators import validate_forbidden_word
 
 
 class CourseBaseSerializer(ModelSerializer):
-    url = serializers.CharField(validators=[validate_forbidden_word])
-
     class Meta:
         model = Course
         fields = ['id', 'title', 'review', 'description']
@@ -22,7 +20,12 @@ class SubscribeSerializer(ModelSerializer):
 
 
 class LessonSerializer(ModelSerializer):
-    url = serializers.CharField(validators=[validate_forbidden_word])
+    url = serializers.CharField(
+        validators=[validate_forbidden_word],
+        required=False,  # ← ДОБАВЛЯЕМ required=False
+        allow_blank=True,  # ← ДОБАВЛЯЕМ allow_blank=True
+        allow_null=True  # ← ДОБАВЛЯЕМ allow_null=True
+    )
     course = CourseBaseSerializer(read_only=True)
 
     class Meta:
@@ -32,7 +35,6 @@ class LessonSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    url = serializers.CharField(validators=[validate_forbidden_word])
     lessons_count = SerializerMethodField()
     lessons = SerializerMethodField()
     is_subscribed = SerializerMethodField()
