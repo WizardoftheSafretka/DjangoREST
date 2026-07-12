@@ -42,22 +42,32 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Cache pip packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Run migrations
+      env:
+        NAME: test_db
+        USER: postgres
+        PASSWORD: postgres
+        HOST: localhost
+        PORT: 5432
+        DJANGO_SETTINGS_MODULE: config.settings
+        SECRET_KEY: django-insecure-ci-test-key
+        DEBUG: False
+      run: |
+        python manage.py makemigrations
+        python manage.py migrate
+
     - name: Run tests
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        NAME: test_db
+        USER: postgres
+        PASSWORD: postgres
+        HOST: localhost
+        PORT: 5432
         DJANGO_SETTINGS_MODULE: config.settings
         SECRET_KEY: django-insecure-ci-test-key
         DEBUG: False
@@ -86,8 +96,7 @@ jobs:
           
           cd /var/www/your-project
           
-          # Обновляем код из ветки develop
-          echo "🔄 Обновляем код..."
+          # Обновляем код
           git fetch origin
           git checkout develop
           git pull origin develop
@@ -109,9 +118,14 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           
-          # Выполняем миграции (используем переменные из .env)
+          # Загружаем переменные из .env
+          echo "📝 Загружаем переменные окружения..."
+          set -a
+          source .env
+          set +a
+          
+          # Выполняем миграции
           echo "🗄️ Выполняем миграции..."
-          source .env  # ← Загружаем переменные из .env
           python manage.py migrate
           
           # Собираем статику
