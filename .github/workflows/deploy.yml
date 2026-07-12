@@ -4,31 +4,21 @@ on:
   push:
     branches: [ develop, main, feature/homework ]
 
-
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
         ports:
           - 5432:5432
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis:7
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -49,7 +39,7 @@ jobs:
 
     - name: Run migrations
       env:
-        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/github_actions
         DJANGO_SETTINGS_MODULE: config.settings
         SECRET_KEY: django-insecure-ci-test-key
         DEBUG: False
@@ -58,7 +48,7 @@ jobs:
 
     - name: Run tests
       env:
-        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/github_actions
         DJANGO_SETTINGS_MODULE: config.settings
         SECRET_KEY: django-insecure-ci-test-key
         DEBUG: False
@@ -88,7 +78,16 @@ jobs:
           # Установка системных пакетов
           echo "📦 Устанавливаем системные пакеты..."
           sudo apt update
-          sudo apt install python3-venv python3-pip git -y
+          sudo apt install python3-venv python3-pip git postgresql postgresql-contrib nginx -y
+          
+          # Запуск PostgreSQL
+          sudo systemctl start postgresql
+          sudo systemctl enable postgresql
+          
+          # Создание базы данных и пользователя
+          sudo -u postgres psql -c "CREATE DATABASE your_project_db;"
+          sudo -u postgres psql -c "CREATE USER your_user WITH PASSWORD 'your_password';"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE your_project_db TO your_user;"
           
           # Создание директории
           if [ ! -d "/var/www/your-project" ]; then
@@ -99,7 +98,7 @@ jobs:
           
           cd /var/www/your-project
           
-          # Клонирование или обновление из ветки develop
+          # Клонирование или обновление
           if [ ! -d ".git" ]; then
             echo "📥 Клонируем репозиторий (ветка develop)..."
             git clone -b develop https://github.com/${{ github.repository }} .
@@ -111,13 +110,24 @@ jobs:
           fi
           
           # Проверяем наличие файлов
-          echo "📂 Содержимое директории:"
-          ls -la
-          
           if [ ! -f "requirements.txt" ]; then
             echo "❌ Файл requirements.txt не найден!"
             exit 1
           fi
+          
+          # Создаем .env файл
+          echo "📝 Создаем .env файл..."
+          cat > .env << 'ENVEOF'
+SECRET_KEY=ваш-секретный-ключ
+DEBUG=False
+NAME=your_project_db
+USER=your_user
+PASSWORD=your_password
+HOST=localhost
+PORT=5432
+STRIPE_API_KEY=ваш-stripe-ключ
+EMAIL_PASSWORD=ваш-email-пароль
+ENVEOF
           
           # Виртуальное окружение
           if [ ! -d "venv" ]; then
