@@ -47,20 +47,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run migrations
-      env:
-        NAME: test_db
-        USER: postgres
-        PASSWORD: postgres
-        HOST: localhost
-        PORT: 5432
-        DJANGO_SETTINGS_MODULE: config.settings
-        SECRET_KEY: django-insecure-ci-test-key
-        DEBUG: False
-      run: |
-        python manage.py makemigrations
-        python manage.py migrate
-
     - name: Run tests
       env:
         NAME: test_db
@@ -71,20 +57,23 @@ jobs:
         DJANGO_SETTINGS_MODULE: config.settings
         SECRET_KEY: django-insecure-ci-test-key
         DEBUG: False
-        REDIS_URL: redis://localhost:6379/0
       run: |
         python manage.py test
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Deploy to production server
+    - name: Get branch name
+      id: branch
+      run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+
+    - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SERVER_HOST }}
@@ -92,47 +81,38 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         port: ${{ secrets.SERVER_PORT || 22 }}
         script: |
-          echo "🚀 Начинаем деплой..."
+          echo "🚀 Начинаем деплой из ветки ${{ steps.branch.outputs.BRANCH_NAME }}..."
           
           cd /var/www/your-project
           
-          # Обновляем код
+          # Обновляем код из текущей ветки
           git fetch origin
-          git checkout develop
-          git pull origin develop
+          git checkout ${{ steps.branch.outputs.BRANCH_NAME }}
+          git pull origin ${{ steps.branch.outputs.BRANCH_NAME }}
           
-          # Проверяем наличие requirements.txt
-          if [ ! -f "requirements.txt" ]; then
-            echo "❌ Файл requirements.txt не найден!"
-            exit 1
-          fi
-          
-          # Активируем виртуальное окружение
+          # Установка зависимостей
           if [ ! -d "venv" ]; then
-            echo "🐍 Создаем виртуальное окружение..."
             python3 -m venv venv
           fi
           
-          echo "📦 Устанавливаем зависимости..."
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
           
           # Загружаем переменные из .env
-          echo "📝 Загружаем переменные окружения..."
           set -a
           source .env
           set +a
           
-          # Выполняем миграции
+          # Миграции
           echo "🗄️ Выполняем миграции..."
           python manage.py migrate
           
-          # Собираем статику
+          # Статика
           echo "📁 Собираем статику..."
           python manage.py collectstatic --noinput
           
-          # Перезапускаем сервисы
+          # Перезапуск
           echo "🔄 Перезапускаем сервисы..."
           sudo systemctl restart gunicorn
           sudo systemctl reload nginx
